@@ -1,33 +1,71 @@
-import Carousel from "react-multi-carousel";
-import "react-multi-carousel/lib/styles.css";
+import React from "react";
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  Route,
+  RouterProvider,
+} from "react-router-dom";
+import RootLayout from "./rootLayout/RootLayout";
+import Home from "./pages/home/Home";
+import Casts from "./pages/casts/Casts";
+import DisplayCast from "./pages/displayCast/DisplayCast";
+import Fetcher from "./components/fetchers/Fetcher";
 
-const responsive = {
-  desktop: {
-    breakpoint: { max: 3000, min: 1024 },
-    items: 3,
-    slidesToSlide: 3, // optional, default to 1.
-  },
-  tablet: {
-    breakpoint: { max: 1024, min: 464 },
-    items: 2,
-    slidesToSlide: 2, // optional, default to 1.
-  },
-  mobile: {
-    breakpoint: { max: 464, min: 0 },
-    items: 1,
-    slidesToSlide: 1, // optional, default to 1.
-  },
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    //routes
+    <Route
+      path="/"
+      element={<RootLayout />}
+      // errorElement={
+      //   <p className="text-[red] text-xl block text-center mt-3 absolute top-0 right-0 w-screen bg-white">
+      //     Oops! There is an error loading data!
+      //   </p>
+      // }
+    >
+      <Route
+        index
+        element={<Home />}
+        loader={async () => {
+          const data = await Fetcher(
+            "https://rickandmortyapi.com/api/character/?page=",
+            1
+          );
+          return data;
+        }}
+        // errorElement={
+        //   <p className="text-[red] text-xl block text-center mt-3 w-screen h-screen bg-white">
+        //     Oops! There is an error loading data!
+        //   </p>
+        // }
+      ></Route>
+
+      <Route
+        path={"/casts"}
+        element={<Casts />}
+        errorElement={
+          <p className="text-[red] text-xl block text-center mt-3 absolute top-0 right-0 w-screen bg-white">
+            There is an error loading data!
+          </p>
+        }
+      ></Route>
+
+      <Route
+        path={"/castDetails"}
+        element={<DisplayCast />}
+        errorElement={
+          <p className="text-[red] text-xl block text-center mt-3 absolute top-0 right-0 w-screen bg-white">
+            There is an error loading data!
+          </p>
+        }
+      ></Route>
+    </Route>
+    //routes
+  )
+);
+
+const App = () => {
+  return <RouterProvider router={router} />;
 };
-
-function App() {
-  return (
-    <Carousel responsive={responsive}>
-      <div>Item 1</div>
-      <div>Item 2</div>
-      <div>Item 3</div>
-      <div>Item 4</div>
-    </Carousel>
-  );
-}
 
 export default App;
